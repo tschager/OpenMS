@@ -343,7 +343,6 @@ set(chemistry_executables_list
   ElementDB_test
   Element_test
   EmpiricalFormula_test
-  EnzymaticDigestionLogModel_test
   EnzymaticDigestion_test
   Enzyme_test
   EnzymesDB_test

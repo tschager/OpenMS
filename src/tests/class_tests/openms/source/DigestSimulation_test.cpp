@@ -66,7 +66,7 @@ START_SECTION((DigestSimulation(const DigestSimulation &source)))
 {
   DigestSimulation a;
   Param p = a.getParameters();
-  p.setValue("enzyme","no cleavage");
+  p.setValue("enzyme","none");
   a.setParameters(p);
   DigestSimulation b(a);
 
@@ -78,7 +78,7 @@ START_SECTION((DigestSimulation& operator=(const DigestSimulation &source)))
 {
   DigestSimulation a,b;
   Param p = a.getParameters();
-  p.setValue("enzyme","no cleavage");
+  p.setValue("enzyme","none");
   a.setParameters(p);
 
   TEST_NOT_EQUAL(b.getParameters(),a.getParameters());
@@ -149,4 +149,6 @@ END_SECTION
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 END_TEST
+
+
 

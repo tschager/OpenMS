@@ -9,7 +9,6 @@ EdwardsLippertIteratorTryptic.h
 Element.h
 ElementDB.h
 EmpiricalFormula.h
-EnzymaticDigestionLogModel.h
 EnzymaticDigestion.h
 Enzyme.h
 EnzymesDB.h

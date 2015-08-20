@@ -345,7 +345,6 @@ set(chemistry_executables_list
   EmpiricalFormula_test
   EnzymaticDigestion_test
   Enzyme_test
-  EnzymesDB_test
   FastaIteratorIntern_test
   FastaIterator_test
   IsotopeDistribution_test

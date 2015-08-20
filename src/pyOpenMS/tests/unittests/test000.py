@@ -1752,10 +1752,6 @@ def testEnzymaticDigestion():
      EnzymaticDigestion.setMissedCleavages()
      EnzymaticDigestion.digest()
      EnzymaticDigestion.peptideCount()
-     EnzymaticDigestion.isLogModelEnabled()
-     EnzymaticDigestion.setLogModelEnabled()
-     EnzymaticDigestion.getLogThreshold()
-     EnzymaticDigestion.setLogThreshold()
     """
     # removed due to name clashes
     # EnzymaticDigestion.getEnzyme()

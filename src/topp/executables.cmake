@@ -13,15 +13,6 @@ Decharger
 DTAExtractor
 EICExtractor
 FalseDiscoveryRate
-FeatureFinderCentroided
-FeatureFinderIdentification
-FeatureFinderIsotopeWavelet
-FeatureFinderMetabo
-FeatureFinderMRM
-FeatureFinderMultiplex
-FeatureLinkerLabeled
-FeatureLinkerUnlabeled
-FeatureLinkerUnlabeledQT
 FidoAdapter
 FileConverter
 FileFilter

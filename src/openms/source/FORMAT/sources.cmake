@@ -36,7 +36,7 @@ MSNumpressCoder.cpp
 MSPFile.cpp
 MascotInfile.cpp
 MascotGenericFile.cpp
-MascotRemoteQuery.cpp
+#MascotRemoteQuery.cpp QT5
 MascotXMLFile.cpp
 MsInspectFile.cpp
 MzDataFile.cpp

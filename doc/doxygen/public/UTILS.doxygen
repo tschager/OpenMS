@@ -70,6 +70,7 @@
 
   <b>Protein/Peptide Identification</b>
   - @subpage UTILS_DecoyDatabase - Create decoy peptide databases from normal ones.
+  - @subpage UTILS_DeNovoSymDiff - Finds a amino acid sequence for a given spectrum.
   - @subpage UTILS_Digestor - Digests a protein database in-silico.
   - @subpage UTILS_DigestorMotif - Digests a protein database in-silico (optionally allowing only peptides with a specific motif) and produces statistical data for all peptides.
   - @subpage UTILS_IDExtractor - Extracts n peptides randomly or best n from idXML files.

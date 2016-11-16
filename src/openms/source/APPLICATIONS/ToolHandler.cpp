@@ -57,6 +57,7 @@ namespace OpenMS
     tools_map["ConvertTraMLToTSV"] = Internal::ToolDescription("ConvertTraMLToTSV", "Targeted Experiments");
     tools_map["ConvertTSVToTraML"] = Internal::ToolDescription("ConvertTSVToTraML", "Targeted Experiments");
     tools_map["Decharger"] = Internal::ToolDescription("Decharger", "Quantitation");
+    tools_map["DeNovoSymDiff"] = Internal::ToolDescription("DeNovoSymDiff", "Finds a amino acid sequence for a given spectrum");
     tools_map["DTAExtractor"] = Internal::ToolDescription("DTAExtractor", "File Handling");
     tools_map["EICExtractor"] = Internal::ToolDescription("EICExtractor", "Quantitation");
     tools_map["ExternalCalibration"] = Internal::ToolDescription("ExternalCalibration", "Signal processing and preprocessing");

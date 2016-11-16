@@ -7,6 +7,7 @@ AccurateMassSearch
 CVInspector
 DecoyDatabase
 DeMeanderize
+DeNovoSymDiff
 Digestor
 DigestorMotif
 ERPairFinder

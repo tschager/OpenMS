@@ -85,7 +85,7 @@ public:
       defaults_.setValue("noise_cutoff", 100.0, "Peaks with lower intensity are ignored");
 
       //SymDiff Parameters
-      defaults_.setValue("count_peaks", "false", "Count number of peaks instead of summing up their intensities (if true, missing peak punishments are ignored)");
+      defaults_.setValue("count_peaks", "false", "Count number of peaks instead of summing up their intensities (if true, missing_peak_punishment should be -2 and half_missing_peak_punishment should be -1 )");
       defaults_.setValidStrings("count_peaks", ListUtils::create<String>("true,false"));
       defaults_.setValue("half_missing_peak_punishment", -2500.0, "Punishment if only one peak of a b-/y-ion peak pair is missing");
       defaults_.setValue("missing_peak_punishment", -5000.0, "Negative score for a missing b-/y-ion peak pair");

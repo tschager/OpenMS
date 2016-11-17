@@ -192,7 +192,14 @@ double score(vector<peak>& peaks, simple_edge e, simple_edge e_given, config con
 				}
 				else
 				{
-					score += peaks[p.index].h;
+					if (conf.COUNT_PEAKS) 
+					{
+						score += 1;
+					}
+					else
+					{
+						score += peaks[p.index].h;
+					}
 				}
 			}
 		}
@@ -223,22 +230,10 @@ double score(vector<peak>& peaks, simple_edge e, simple_edge e_given, config con
 			{
 				score += conf.HALF_MISSING_PEAK_PUNISHMENT;
 			}
-			else
-			{
-				//score += peaks[e.to/2].h;
-			}
 			if(peaks[peaks.size()-1-e.to/2].h < conf.MISSING_PEAK_THRESHOLD_SCORE)
 			{
 				score += conf.HALF_MISSING_PEAK_PUNISHMENT;
 			}
-			else
-			{
-				//score += peaks[peaks.size()-1-e.to/2].h;
-			}
-		}
-		else
-		{
-			//score += peaks[e.to/2].h;
 		}
 	}
 

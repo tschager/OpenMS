@@ -156,15 +156,15 @@ public:
 	if(annotationSequence.size()>0)
 	{
 		replace(annotationSequence.begin(),annotationSequence.end(), 'I', 'L');//Replace all I with L because they have the same mass and our algorithm only generates L's
-		cout << annotationSequence << ";" << input.getRT() << ";";
+		cout << annotationSequence << "," << input.getRT() << ",";
 		AASequence annotation = AASequence::fromString(annotationSequence);
 		if(result.getHits().size()==0)
 		{
-			cout << "Inf;Inf;Inf;Inf;";
+			cout << "Inf,Inf,Inf,Inf,";
 		}
 		else
 		{
-			cout << result.getHits()[0].getScore() << ";";
+			cout << result.getHits()[0].getScore() << ",";
 
 			int solutionPos=-1;
 			for(int i=0; i<result.getHits().size(); i++)
@@ -177,17 +177,17 @@ public:
 			}
 			if(solutionPos>=0)
 			{
-				cout << result.getHits()[solutionPos].getScore() << ";";
+				cout << result.getHits()[solutionPos].getScore() << ",";
 				while(solutionPos>0 && result.getHits()[solutionPos-1].getScore()==result.getHits()[solutionPos].getScore())
 				{
 					solutionPos--;
 				}
-				cout << solutionPos << ";";
-				cout << "Inf;";
+				cout << solutionPos << ",";
+				cout << "Inf,";
 			}
 			else
 			{
-				cout << "Inf;Inf;Inf;";
+				cout << "Inf,Inf,Inf,";
 			}
 		}
 		cout << endl;

@@ -124,4 +124,72 @@ double get_aminoacid_mass(char c)
 	return 0;
 }
 
+/**
+  @brief Returns the set of prefix masses of an amino acid sequence seq
+*/
+vector<double> get_prefix_masses( string seq ) 
+{
+	vector<double> prefix_masses;
+	for ( int i = 0; i < seq.size(); i++ )
+	{
+		string aa = seq.substr(i,1);
+		// substitute all L's by I's
+		if ( aa == "L" )
+		{
+			aa == "I";
+		}
+		if ( prefix_masses.size() == 0 )
+		{
+			prefix_masses.push_back( get_aminoacid_mass(aa.at(0)) );
+		}
+		else
+		{
+			prefix_masses.push_back( prefix_masses.back() + get_aminoacid_mass(aa.at(0)) );
+		}
+	}
+	return prefix_masses;
+}
+
+
+/**
+  @brief Returns the recall of an amino acid sequence seq2 wrt. the true amino acid sequence seq1 and a given accuracy epsilon>0
+  recall = number of common prefix masses of seq1 and seq2 divided by number of prefix masses of seq1
+*/
+double get_recall( string seq1, string seq2, const double eps)
+{
+	vector<double> prefix_masses_seq1 = get_prefix_masses(seq1);
+	vector<double> prefix_masses_seq2 = get_prefix_masses(seq2);
+	set<double> intersection( prefix_masses_seq1.begin(), prefix_masses_seq1.end() );
+
+	bool found = true;
+	double low,high;
+	while (found)
+	{
+		found = false;
+		set<double>::iterator iter;
+		for (iter = intersection.begin(); iter != intersection.end(); ++iter) 
+		{
+			double m = *iter;
+			vector<double>::iterator up = upper_bound(prefix_masses_seq2.begin(), prefix_masses_seq2.end(), m);
+			if ( up != prefix_masses_seq2.begin() ) 
+			{
+				low = *(up - 1);
+			}
+			else
+			{
+				low = prefix_masses_seq2.front();
+			}
+			high = *up;
+			if ( fabs(high - m) > eps && fabs(low-m) > eps )
+			{
+				intersection.erase(m);
+				found = true;
+			}
+		}
+	}
+	
+	double recall = (double)intersection.size() / prefix_masses_seq1.size();
+	return recall;
+}
+
 #endif

@@ -164,7 +164,7 @@ void find_all_peptides(vector<peak>& peaks, char last_letter, double rho, vector
 	vector< vector<double> > matrix_l = vector< vector<double> >(k, vector<double>(edge_count, NEG_INF));
 	vector< vector<double> > matrix_r = vector< vector<double> >(k, vector<double>(edge_count, NEG_INF));
 
-	double max_score=0;
+	double max_score = 0;
 	matrix_l[0][0] = conf.START_SCORE; 
 	for(int x=0; x<k; x++)
 	{

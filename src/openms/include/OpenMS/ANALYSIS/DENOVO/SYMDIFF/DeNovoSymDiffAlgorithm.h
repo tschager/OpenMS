@@ -156,11 +156,11 @@ public:
 		if(annotationSequence.size()>0)
 		{
 			replace(annotationSequence.begin(),annotationSequence.end(), 'I', 'L');//Replace all I with L because they have the same mass and our algorithm only generates L's
-			cout << annotationSequence << "," << input.getRT() << ",";
+			cout << "RESULT," <<annotationSequence << "," << input.getRT() << ",";
 			AASequence annotation = AASequence::fromString(annotationSequence);
 			if(result.getHits().size()==0)
 			{
-				cout << "Inf,Inf,Inf,Inf,0";
+				cout << "Inf,Inf,Inf,Inf,0,***";
 			}
 			else
 			{
@@ -210,7 +210,7 @@ public:
 				}
 				cout << bestScore << ",";
 				cout << bestSequence << ",";
-				cout << bestRecall;
+				cout << bestRecall << ",***" ;
 			}
 			cout << endl;
 		}

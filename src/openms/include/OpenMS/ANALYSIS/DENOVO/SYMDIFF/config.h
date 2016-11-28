@@ -39,17 +39,17 @@
 
 ///config. A struct that holds our configuration parameters.
 typedef struct {
-	double EPS;
-	double MERGING_EPS;
-	double NOISE_H_CUTOFF;
-	double MISSING_PEAK_PUNISHMENT;
-	double HALF_MISSING_PEAK_PUNISHMENT;
-	double MISSING_PEAK_THRESHOLD_SCORE;
-	double MISSING_ION_PEAK_PUNISHMENT;
-	double START_SCORE;
-	bool COUNT_PEAKS;
-	OpenMS::DoubleList b_ion_offsets;
-	OpenMS::DoubleList y_ion_offsets;
+  double EPS;
+  double MERGING_EPS;
+  double NOISE_H_CUTOFF;
+  double MISSING_PEAK_PUNISHMENT;
+  double HALF_MISSING_PEAK_PUNISHMENT;
+  double MISSING_PEAK_THRESHOLD_SCORE;
+  double MISSING_ION_PEAK_PUNISHMENT;
+  double START_SCORE;
+  bool COUNT_PEAKS;
+  OpenMS::DoubleList b_ion_offsets;
+  OpenMS::DoubleList y_ion_offsets;
 } config;
 
 #endif

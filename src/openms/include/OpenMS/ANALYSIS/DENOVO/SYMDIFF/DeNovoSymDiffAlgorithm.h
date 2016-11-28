@@ -50,20 +50,20 @@
 namespace OpenMS
 {
   /**
-	@brief A class handling the parameters to run the symmetric difference de novo sequencing algorithm
+  @brief A class handling the parameters to run the symmetric difference de novo sequencing algorithm
 
-	This class defines all parameters for the algorithm and it's default values.
+  This class defines all parameters for the algorithm and it's default values.
 
-	For exection the parameters are filled in a config struct and passed to the solver.
+  For exection the parameters are filled in a config struct and passed to the solver.
 
-	The only parameter check that is conducted, is that the number of last_characters matches the number of last_character_tags. A basic parameter check is already done by the framework.
+  The only parameter check that is conducted, is that the number of last_characters matches the number of last_character_tags. A basic parameter check is already done by the framework.
   */
   class OPENMS_DLLAPI DeNovoSymDiffAlgorithm :
     public DefaultParamHandler
   {
 
 
-public:
+  public:
 
     /// Default constructor that fills the default params
     DeNovoSymDiffAlgorithm() :
@@ -103,121 +103,119 @@ public:
       defaults_.setValue("y_ion_offsets", y_ion_offsets, "Offsets for additional ion types to the y-ion");
 
       defaults_.setValue("annotation_sequence", "", "A amino acid sequence from annotation data. This can be used for testing the algorithm with a test set where the correct sequence is already known. The tool then outputs performance values as well");
-      
+
       // write defaults into Param object param_
       defaultsToParam_();
     }
 
     /**
-	@brief This method is used to execute a search for amino acid sequences.
+  @brief This method is used to execute a search for amino acid sequences.
 
-	The @em input is the spectrum on which the search as to be performed. All other parameters are passed by the framework over the @em param_ field.
+  The @em input is the spectrum on which the search as to be performed. All other parameters are passed by the framework over the @em param_ field.
 
-	@exception Exception::InvalidParameter is thrown if the number of elements in the parameter last_characters does not match the number of elements in last_character_tag.
+  @exception Exception::InvalidParameter is thrown if the number of elements in the parameter last_characters does not match the number of elements in last_character_tag.
 
     */
     PeptideIdentification searchSequences(const MSSpectrum<Peak1D>& input, double mass)
     {
-	
-	vector<peak> spectrum;
 
-        for(Size i=0; i<input.size(); i++)
+    std::vector<peak> spectrum;
+
+      for(Size i=0; i<input.size(); i++)
+      {
+        peak p = {input.getRT(), input[i].getMZ(), input[i].getIntensity()};
+        spectrum.push_back(p);
+      }
+
+      config conf;
+      conf.EPS = param_.getValue("accuracy");
+      conf.MERGING_EPS = param_.getValue("merge_accuracy");
+      conf.NOISE_H_CUTOFF = param_.getValue("noise_cutoff");
+      conf.COUNT_PEAKS = param_.getValue("count_peaks").toBool();
+      conf.MISSING_PEAK_PUNISHMENT = param_.getValue("missing_peak_punishment");
+      conf.HALF_MISSING_PEAK_PUNISHMENT = param_.getValue("half_missing_peak_punishment");
+      conf.MISSING_PEAK_THRESHOLD_SCORE = param_.getValue("missing_peak_threshold");
+      conf.MISSING_ION_PEAK_PUNISHMENT = param_.getValue("missing_ion_peak_punishment");
+      conf.START_SCORE = -10*conf.MISSING_PEAK_PUNISHMENT;
+      conf.b_ion_offsets = param_.getValue("b_ion_offsets");
+      conf.y_ion_offsets = param_.getValue("y_ion_offsets");
+
+      StringList lastChars = param_.getValue("last_characters");
+      DoubleList lastCharTags = param_.getValue("last_character_tag");
+      if(lastChars.size()!=lastCharTags.size())
+      {
+        throw Exception::InvalidParameter(__FILE__, __LINE__, __PRETTY_FUNCTION__, "For every last character a corresponding tag is required! Use 0 if you don't need an offset.");
+      }
+
+      PeptideIdentification result = solve_one_prec_mass(spectrum, mass, param_.getValue("rho"), input.getRT(), conf, lastChars, lastCharTags);
+
+      //If an annotation sequence is given we search this sequence and output maxscore and score and position of the sequence
+      //Format: annotated sequence, retention time, position of annotated seq, score of annotated seq, best score,  best scoring sequence, recall of best scoring sequence
+      std::string annotationSequence = param_.getValue("annotation_sequence");
+      if(annotationSequence.size()>0)
+      {
+        replace(annotationSequence.begin(),annotationSequence.end(), 'I', 'L');//Replace all I with L because they have the same mass and our algorithm only generates L's
+        std::cout << "RESULT," << annotationSequence << "," << input.getRT() << ",";
+        AASequence annotation = AASequence::fromString(annotationSequence);
+        if(result.getHits().size()==0)
         {
-			peak p = {input.getRT(), input[i].getMZ(), input[i].getIntensity()};
-			spectrum.push_back(p);
-		}
+          std::cout << "Inf,Inf,Inf,Inf,0,***";
+        }
+        else
+        {
+          const double bestScore = result.getHits()[0].getScore();
 
-		config conf;
-		conf.EPS = param_.getValue("accuracy");
-		conf.MERGING_EPS = param_.getValue("merge_accuracy");
-		conf.NOISE_H_CUTOFF = param_.getValue("noise_cutoff");
-		conf.COUNT_PEAKS = param_.getValue("count_peaks").toBool();
-		conf.MISSING_PEAK_PUNISHMENT = param_.getValue("missing_peak_punishment");
-		conf.HALF_MISSING_PEAK_PUNISHMENT = param_.getValue("half_missing_peak_punishment");
-		conf.MISSING_PEAK_THRESHOLD_SCORE = param_.getValue("missing_peak_threshold");
-		conf.MISSING_ION_PEAK_PUNISHMENT = param_.getValue("missing_ion_peak_punishment");
-		conf.START_SCORE = -10*conf.MISSING_PEAK_PUNISHMENT;
-		conf.b_ion_offsets = param_.getValue("b_ion_offsets");
-		conf.y_ion_offsets = param_.getValue("y_ion_offsets");
+          // find the position of the annotated sequence
+          int solutionPos=-1;
+          for(int i=0; i<result.getHits().size(); i++)
+          {
+            if(result.getHits()[i].getSequence()==annotation)
+            {
+              solutionPos = i;
+              break;
+            }
+          }
 
+          // find the position of the first sequence that has the same score as the annotated sequence
+          while( solutionPos>0 && result.getHits()[solutionPos-1].getScore()==result.getHits()[solutionPos].getScore() )
+          {
+            solutionPos--;
+          }
 
-		StringList lastChars = param_.getValue("last_characters");
-		DoubleList lastCharTags = param_.getValue("last_character_tag");
-		if(lastChars.size()!=lastCharTags.size())
-		{
-			throw Exception::InvalidParameter(__FILE__, __LINE__, __PRETTY_FUNCTION__, "For every last character a corresponding tag is required! Use 0 if you don't need an offset.");
-		}
+          // find the best recall of a best-scoring sequence
+          int i = 0;
+          double r;
+          double bestRecall = 0;
+          std::string bestSequence = result.getHits()[0].getSequence().toString();
+          while ( result.getHits()[i].getScore() == bestScore )
+          {
+            r = get_recall( annotationSequence, result.getHits()[i].getSequence().toString(), conf.EPS );
+            if (r > bestRecall) 
+            {
+              bestRecall = r;
+              bestSequence = result.getHits()[i].getSequence().toString();
+            }
+            i++;
+          }
 
-		PeptideIdentification result = solve_one_prec_mass(spectrum, mass, param_.getValue("rho"), input.getRT(), conf, lastChars, lastCharTags);
+          if (solutionPos >= 0)
+          {
+            std::cout << solutionPos << ",";
+            std::cout << result.getHits()[solutionPos].getScore() << ",";
+          }
+          else
+          {
+            std::cout << "Inf,Inf,";
+          }
+          std::cout << bestScore << ",";
+          std::cout << bestSequence << ",";
+          std::cout << bestRecall << ",***" ;
+        }
+        std::cout << std::endl;
+      }
 
-		//If an annotation sequence is given we search this sequence and output maxscore and score and position of the sequence
-		//Format: annotated sequence, retention time, position of annotated seq, score of annotated seq, best score,  best scoring sequence, recall of best scoring sequence
-		string annotationSequence = param_.getValue("annotation_sequence");
-		if(annotationSequence.size()>0)
-		{
-			replace(annotationSequence.begin(),annotationSequence.end(), 'I', 'L');//Replace all I with L because they have the same mass and our algorithm only generates L's
-			cout << "RESULT," <<annotationSequence << "," << input.getRT() << ",";
-			AASequence annotation = AASequence::fromString(annotationSequence);
-			if(result.getHits().size()==0)
-			{
-				cout << "Inf,Inf,Inf,Inf,0,***";
-			}
-			else
-			{
-				const double bestScore = result.getHits()[0].getScore();
-
-				// find the position of the annotated sequence
-				int solutionPos=-1;
-				for(int i=0; i<result.getHits().size(); i++)
-				{
-					if(result.getHits()[i].getSequence()==annotation)
-					{
-						solutionPos = i;
-						break;
-					}
-				}
-
-				// find the position of the first sequence that has the same score as the annotated sequence
-				while( solutionPos>0 && result.getHits()[solutionPos-1].getScore()==result.getHits()[solutionPos].getScore() )
-				{
-					solutionPos--;
-				}
-
-				// find the best recall of a best-scoring sequence
-				int i = 0;
-				double r;
-				double bestRecall = 0;
-				string bestSequence = result.getHits()[0].getSequence().toString();
-				while ( result.getHits()[i].getScore() == bestScore )
-				{
-					r = get_recall( annotationSequence, result.getHits()[i].getSequence().toString(), conf.EPS );
-					if (r > bestRecall) 
-					{
-						bestRecall = r;
-						bestSequence = result.getHits()[i].getSequence().toString();
-					}
-					i++;
-				}
-				
-				if (solutionPos >= 0)
-				{
-					cout << solutionPos << ",";
-					cout << result.getHits()[solutionPos].getScore() << ",";
-				}
-				else
-				{
-					cout << "Inf,Inf,";
-				}
-				cout << bestScore << ",";
-				cout << bestSequence << ",";
-				cout << bestRecall << ",***" ;
-			}
-			cout << endl;
-		}
-
-		return result;
-	}
-
+      return result;
+    }
 
   };
 

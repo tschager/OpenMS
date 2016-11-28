@@ -40,9 +40,7 @@
 #include <string>
 #include <map>
 
-using namespace std;
-
-#define peptide pair<double,vector<string> >
+#define peptide std::pair<double,std::vector<std::string> >
 #define mp make_pair
 
 //Edge. An edge of our matrix spectrum graph.
@@ -51,9 +49,9 @@ typedef struct {
 	int from_y;
 	int to_x;
 	int to_y;
-	string label;
-	string label_x;
-	string label_y;
+	std::string label;
+	std::string label_x;
+	std::string label_y;
 } edge;
 
 //Peak. A simple peak of a mass spectrum.

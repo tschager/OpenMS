@@ -116,7 +116,7 @@ public:
     PeptideIdentification searchSequences(const MSSpectrum<Peak1D>& input, double mass)
     {
 	
-	vector<peak> spectrum;
+	std::vector<peak> spectrum;
 
         for(Size i=0; i<input.size(); i++)
         {
@@ -148,19 +148,19 @@ public:
 
 
 	//If an annotation sequence is given we search this sequence and output maxscore and score and position of the sequence
-	string annotationSequence = param_.getValue("annotation_sequence");
+	std::string annotationSequence = param_.getValue("annotation_sequence");
 	if(annotationSequence.size()>0)
 	{
 		replace(annotationSequence.begin(),annotationSequence.end(), 'I', 'L');//Replace all I with L because they have the same mass and our algorithm only generates L's
-		cout << annotationSequence << ";" << input.getRT() << ";";
+		std::cout << annotationSequence << ";" << input.getRT() << ";";
 		AASequence annotation = AASequence::fromString(annotationSequence);
 		if(result.getHits().size()==0)
 		{
-			cout << "Inf;Inf;Inf;Inf;";
+			std::cout << "Inf;Inf;Inf;Inf;";
 		}
 		else
 		{
-			cout << result.getHits()[0].getScore() << ";";
+			std::cout << result.getHits()[0].getScore() << ";";
 
 			int solutionPos=-1;
 			for(int i=0; i<result.getHits().size(); i++)
@@ -173,20 +173,20 @@ public:
 			}
 			if(solutionPos>=0)
 			{
-				cout << result.getHits()[solutionPos].getScore() << ";";
+				std::cout << result.getHits()[solutionPos].getScore() << ";";
 				while(solutionPos>0 && result.getHits()[solutionPos-1].getScore()==result.getHits()[solutionPos].getScore())
 				{
 					solutionPos--;
 				}
-				cout << solutionPos << ";";
-				cout << "Inf;";
+				std::cout << solutionPos << ";";
+				std::cout << "Inf;";
 			}
 			else
 			{
-				cout << "Inf;Inf;Inf;";
+				std::cout << "Inf;Inf;Inf;";
 			}
 		}
-		cout << endl;
+		std::cout << std::endl;
 	}
 
 	return result;

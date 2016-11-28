@@ -39,7 +39,6 @@
 #include <sstream>
 
 using namespace OpenMS;
-using namespace std;
 
 
 class DeNovoSymDiff
@@ -89,7 +88,7 @@ class DeNovoSymDiff
     DeNovoSymDiffAlgorithm sdd;
     sdd.setParameters(params);
 
-    vector<PeptideIdentification> pep_ids;
+    std::vector<PeptideIdentification> pep_ids;
 
     for(Size i=0; i<exp.size(); i++)
     {
@@ -105,12 +104,12 @@ class DeNovoSymDiff
     String date_string = now.get();
     String identifier("CompNovo_" + date_string);
 
-    for (vector<PeptideIdentification>::iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
+    for (std::vector<PeptideIdentification>::iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
     {
       it->setIdentifier(identifier);
     }
 
-    vector<ProteinIdentification> prot_ids;
+    std::vector<ProteinIdentification> prot_ids;
     ProteinIdentification prot_id;
     prot_id.setIdentifier(identifier);
     prot_id.setDateTime(now);

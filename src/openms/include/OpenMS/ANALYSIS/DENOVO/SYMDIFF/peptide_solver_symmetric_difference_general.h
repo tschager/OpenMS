@@ -47,7 +47,7 @@
   From a given set of peaks the matrix spectrum graph is computed. Then in order to find the @em rho best solutions, a DFS is executed. To do this efficiently we first compute L and R that allow us to abort the DFS search once we are on a path that will not lead to a good enough solution.
 
 */
-void find_all_peptides(vector<peak>& peaks, char last_letter, double rho, vector<peptide>& result, config conf)
+void find_all_peptides(std::vector<peak>& peaks, char last_letter, double rho, std::vector<peptide>& result, config conf)
 {
 	scoreCacheClear();
 
@@ -55,9 +55,9 @@ void find_all_peptides(vector<peak>& peaks, char last_letter, double rho, vector
 
 	int edge_count=0;
 
-	vector< vector<simple_edge> > matrix_edges = vector< vector<simple_edge> >(2*k, vector<simple_edge>() );
-	vector< vector<simple_edge> > matrix_in_edges = vector< vector<simple_edge> >(2*k, vector<simple_edge>() );
-	vector< simple_edge > edges;
+	std::vector< std::vector<simple_edge> > matrix_edges = std::vector< std::vector<simple_edge> >(2*k, std::vector<simple_edge>() );
+	std::vector< std::vector<simple_edge> > matrix_in_edges = std::vector< std::vector<simple_edge> >(2*k, std::vector<simple_edge>() );
+	std::vector< simple_edge > edges;
 
 	simple_edge end_edge;
 	end_edge.from=1;
@@ -71,12 +71,12 @@ void find_all_peptides(vector<peak>& peaks, char last_letter, double rho, vector
 	{
 		for(int m=k-1; m>x; m--)
 		{
-			vector<string> label = get_label(peaks[m].mz-peaks[x].mz, conf);
+			std::vector<std::string> label = get_label(peaks[m].mz-peaks[x].mz, conf);
 			if(label.size()>0)
 			{
 				for(int i=0; i<label.size(); i++)
 				{
-					string l = label[i];
+					std::string l = label[i];
 					if(l.size()>1)
 					{
 						double missing = peaks[x].mz+get_aminoacid_mass(l[1]);
@@ -116,12 +116,12 @@ void find_all_peptides(vector<peak>& peaks, char last_letter, double rho, vector
 	{
 		for(int m=0; m<y; m++)
 		{
-			vector<string> label = get_label(peaks[y].mz-peaks[m].mz, conf);
+			std::vector<std::string> label = get_label(peaks[y].mz-peaks[m].mz, conf);
 			if(label.size()>0)
 			{
 				for(int i=0; i<label.size(); i++)
 				{
-					string l = label[i];
+					std::string l = label[i];
 					//Restrict last edge to end with last_letter
 					if(y!=k-1 || l[0]==last_letter || (l.size()>1 && l[l.size()-2]==last_letter))
 					{
@@ -161,8 +161,8 @@ void find_all_peptides(vector<peak>& peaks, char last_letter, double rho, vector
 	}
 
 	//Compute L-Values and max_score in topological order
-	vector< vector<double> > matrix_l = vector< vector<double> >(k, vector<double>(edge_count, NEG_INF));
-	vector< vector<double> > matrix_r = vector< vector<double> >(k, vector<double>(edge_count, NEG_INF));
+	std::vector< std::vector<double> > matrix_l = std::vector< std::vector<double> >(k, std::vector<double>(edge_count, NEG_INF));
+	std::vector< std::vector<double> > matrix_r = std::vector< std::vector<double> >(k, std::vector<double>(edge_count, NEG_INF));
 
 	double max_score=0;
 	matrix_l[0][0] = conf.START_SCORE; 
@@ -176,7 +176,7 @@ void find_all_peptides(vector<peak>& peaks, char last_letter, double rho, vector
 			}
 			else if(edges[e].to/2+x/2==k-1)
 			{
-				max_score = max(max_score, matrix_l[x][e]);
+				max_score = std::max(max_score, matrix_l[x][e]);
 				matrix_r[x][e] = 0;
 			}
 			else
@@ -190,11 +190,11 @@ void find_all_peptides(vector<peak>& peaks, char last_letter, double rho, vector
 					}
 					else if(out_e.to > edges[e].to)
 					{
-						matrix_l[edges[e].to][out_e.id] = max(matrix_l[edges[e].to][out_e.id], matrix_l[x][e]+score(peaks, out_e, edges[e], conf));
+						matrix_l[edges[e].to][out_e.id] = std::max(matrix_l[edges[e].to][out_e.id], matrix_l[x][e]+score(peaks, out_e, edges[e], conf));
 					}
 					else
 					{
-						matrix_l[out_e.to][edges[e].id] = max(matrix_l[out_e.to][edges[e].id], matrix_l[x][e]+score(peaks, out_e, edges[e], conf));
+						matrix_l[out_e.to][edges[e].id] = std::max(matrix_l[out_e.to][edges[e].id], matrix_l[x][e]+score(peaks, out_e, edges[e], conf));
 					}
 				}
 			}
@@ -213,11 +213,11 @@ void find_all_peptides(vector<peak>& peaks, char last_letter, double rho, vector
 					simple_edge in_e = matrix_in_edges[x][i];
 					if(in_e.from < edges[e].from)
 					{
-						matrix_r[edges[e].from][in_e.id] = max(matrix_r[edges[e].from][in_e.id], matrix_r[x][e]+score(peaks, edges[e], in_e, conf));
+						matrix_r[edges[e].from][in_e.id] = std::max(matrix_r[edges[e].from][in_e.id], matrix_r[x][e]+score(peaks, edges[e], in_e, conf));
 					}
 					else
 					{
-						matrix_r[in_e.from][edges[e].id] = max(matrix_r[in_e.from][edges[e].id], matrix_r[x][e]+score(peaks, in_e, edges[e], conf));
+						matrix_r[in_e.from][edges[e].id] = std::max(matrix_r[in_e.from][edges[e].id], matrix_r[x][e]+score(peaks, in_e, edges[e], conf));
 					}
 				}
 			}
@@ -229,13 +229,13 @@ void find_all_peptides(vector<peak>& peaks, char last_letter, double rho, vector
 
 	//find all paths with score >= rho*max_score, for this we use DFS
 
-	vector< int > edge_counter = vector< int >(k, 0);
+	std::vector< int > edge_counter = std::vector< int >(k, 0);
 	int x = 0;
 	int e = 0;
-	vector<simple_edge> edge_stack;
-	vector<double> scores;
-	vector<int> e_stack;
-	vector<int> x_stack;
+	std::vector<simple_edge> edge_stack;
+	std::vector<double> scores;
+	std::vector<int> e_stack;
+	std::vector<int> x_stack;
 	scores.push_back(conf.START_SCORE);
 	while (true)
 	{
@@ -268,7 +268,7 @@ void find_all_peptides(vector<peak>& peaks, char last_letter, double rho, vector
 			if (edges[e].to/2+x/2==k-1 && scores.back()>=rho*max_score)
 			{
 
-				vector<string> p;
+				std::vector<std::string> p;
 				for(int i=0; i<edge_stack.size(); i++)
 				{
 					simple_edge e = edge_stack[i];

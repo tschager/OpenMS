@@ -46,7 +46,7 @@
 typedef struct{
 	int from;
 	int to;
-	string label;
+	std::string label;
 	int id;
 } simple_edge;
 
@@ -69,7 +69,7 @@ struct comp_mass_index {
 /**
   @brief This method searches a peak representing the @em mass.
 */
-mass_index getIndexForMass(vector<peak>& peaks, double mass, config conf, bool punishType)
+mass_index getIndexForMass(std::vector<peak>& peaks, double mass, config conf, bool punishType)
 {
 	for(int i=0; i<peaks.size(); i++)
 	{
@@ -83,15 +83,15 @@ mass_index getIndexForMass(vector<peak>& peaks, double mass, config conf, bool p
 }
 
 ///Caching for the computed peaks for every vertex
-vector<vector<mass_index> > explainedPeakCacheVector;
-vector<set<mass_index, comp_mass_index> > explainedPeakCache;
+std::vector<std::vector<mass_index> > explainedPeakCacheVector;
+std::vector<std::set<mass_index, comp_mass_index> > explainedPeakCache;
 
 /**
   @brief This method computes all ion peaks for a given b-ion peak.
 */
-vector<mass_index> getExplainedPeaksForIndexVector(vector<peak>& peaks, int index, config conf)
+std::vector<mass_index> getExplainedPeaksForIndexVector(std::vector<peak>& peaks, int index, config conf)
 {
-	vector<mass_index> result;
+	std::vector<mass_index> result;
 	if(index>0 && (index>=explainedPeakCacheVector.size() || explainedPeakCacheVector[index].size()==0))
 	{
 		
@@ -128,7 +128,7 @@ vector<mass_index> getExplainedPeaksForIndexVector(vector<peak>& peaks, int inde
 			result.push_back(getIndexForMass(peaks, y.mass+conf.y_ion_offsets[i], conf, true));
 		}
 
-		explainedPeakCacheVector.resize(max((int)explainedPeakCache.size(),index+1));
+		explainedPeakCacheVector.resize(std::max((int)explainedPeakCache.size(),index+1));
 		explainedPeakCacheVector[index] = result;
 
 	}
@@ -143,19 +143,19 @@ vector<mass_index> getExplainedPeaksForIndexVector(vector<peak>& peaks, int inde
 /**
   @brief This method does the same as getExplainedPeaksForIndexVector but returns the result in a set.
 */
-set<mass_index, comp_mass_index> getExplainedPeaksForIndex(vector<peak>& peaks, int index, config conf)
+std::set<mass_index, comp_mass_index> getExplainedPeaksForIndex(std::vector<peak>& peaks, int index, config conf)
 {
-	set<mass_index, comp_mass_index> result;
+	std::set<mass_index, comp_mass_index> result;
 	if(index>0 && (index>=explainedPeakCache.size() || explainedPeakCache[index].size()==0))
 	{
 		
-		vector<mass_index> v = getExplainedPeaksForIndexVector(peaks, index, conf);
+		std::vector<mass_index> v = getExplainedPeaksForIndexVector(peaks, index, conf);
 		for(int i=0; i<v.size(); i++ )
 		{
 			result.insert(v[i]);
 		}
 
-		explainedPeakCache.resize(max((int)explainedPeakCache.size(),index+1));
+		explainedPeakCache.resize(std::max((int)explainedPeakCache.size(),index+1));
 		explainedPeakCache[index] = result;
 
 	}
@@ -171,13 +171,13 @@ set<mass_index, comp_mass_index> getExplainedPeaksForIndex(vector<peak>& peaks, 
   @brief This method computes the score for an edge, under the condition that @em e_given was already scored.
 
 */
-double score(vector<peak>& peaks, simple_edge e, simple_edge e_given, config conf)
+double score(std::vector<peak>& peaks, simple_edge e, simple_edge e_given, config conf)
 {
 	double score = 0;
 
 	//vertex score
-	set<mass_index, comp_mass_index> given = getExplainedPeaksForIndex(peaks, e_given.to, conf);
-	vector<mass_index> new_peaks = getExplainedPeaksForIndexVector(peaks, e.to, conf);
+	std::set<mass_index, comp_mass_index> given = getExplainedPeaksForIndex(peaks, e_given.to, conf);
+	std::vector<mass_index> new_peaks = getExplainedPeaksForIndexVector(peaks, e.to, conf);
 
 	for(int i=0; i<new_peaks.size(); i++)
 	{
@@ -203,7 +203,7 @@ double score(vector<peak>& peaks, simple_edge e, simple_edge e_given, config con
 			low.mass = p.mass-conf.EPS;
 			mass_index upp;
 			upp.mass = p.mass+conf.EPS;
-			for(set<mass_index,comp_mass_index>::iterator it=given.lower_bound(low); it!=given.upper_bound(upp); ++it)
+			for(std::set<mass_index,comp_mass_index>::iterator it=given.lower_bound(low); it!=given.upper_bound(upp); ++it)
 			{
 				add=false;
 			}

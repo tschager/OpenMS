@@ -42,30 +42,30 @@
 #include "data_types.h"
 #include "config.h"
 
-set<pair<double, string> > amino_masses;
-set<peak,comp_peak> spectrum;
+std::set<std::pair<double, std::string> > amino_masses;
+std::set<peak,comp_peak> spectrum;
 
-pair<double,string> aminoacids[19] = 
+std::pair<double, std::string> aminoacids[19] = 
 {
-	mp(57.02147,"G"),
-	mp(71.03712,"A"),
-	mp(87.03203,"S"),
-	mp(97.05277,"P"),
-	mp(99.06842,"V"),
-	mp(101.04768,"T"),
-	mp(103.00919,"C"),
-	mp(113.08407,"L"),
-	mp(114.04293,"N"),
-	mp(115.02695,"D"),
-	mp(128.05858,"Q"),
-	mp(128.09497,"K"),
-	mp(129.04260,"E"),
-	mp(131.04049,"M"),
-	mp(137.05891,"H"),
-	mp(147.06842,"F"),
-	mp(156.10112,"R"),
-	mp(163.06333,"Y"),
-	mp(186.07932,"W")
+	std::mp(57.02147,"G"),
+	std::mp(71.03712,"A"),
+	std::mp(87.03203,"S"),
+	std::mp(97.05277,"P"),
+	std::mp(99.06842,"V"),
+	std::mp(101.04768,"T"),
+	std::mp(103.00919,"C"),
+	std::mp(113.08407,"L"),
+	std::mp(114.04293,"N"),
+	std::mp(115.02695,"D"),
+	std::mp(128.05858,"Q"),
+	std::mp(128.09497,"K"),
+	std::mp(129.04260,"E"),
+	std::mp(131.04049,"M"),
+	std::mp(137.05891,"H"),
+	std::mp(147.06842,"F"),
+	std::mp(156.10112,"R"),
+	std::mp(163.06333,"Y"),
+	std::mp(186.07932,"W")
 };
 
 /**
@@ -84,7 +84,7 @@ void init_mass_table()
 	  	{
 		  	for (int j = 0; j < 19;++j) 
 			{
-				pair<double,string> p = mp(aminoacids[i].first + aminoacids[j].first,  "("+aminoacids[i].second + aminoacids[j].second+")");
+				std::pair<double,std::string> p = std::mp(aminoacids[i].first + aminoacids[j].first,  "("+aminoacids[i].second + aminoacids[j].second+")");
 				amino_masses.insert(p);
 			}
 	  	}
@@ -94,10 +94,10 @@ void init_mass_table()
 /**
   @brief Returns a list of possible labels for a mass difference
 */
-vector<string> get_label(double mass, config conf) 
+std::vector<std::string> get_label(double mass, config conf) 
 {
-	vector<string> rez;
-	set<pair<double,string> >::iterator it = amino_masses.lower_bound(mp(mass - conf.EPS, ""));
+	std::vector<std::string> rez;
+	std::set<std::pair<double,std::string> >::iterator it = amino_masses.lower_bound(std::mp(mass - conf.EPS, ""));
 	for (; it!= amino_masses.end() && (*it).first - mass <= conf.EPS ; ++it) 
 	{
 		if (fabs((*it).first - mass) <= conf.EPS) 
@@ -115,7 +115,7 @@ double get_aminoacid_mass(char c)
 {
 	for(int i=0; i<sizeof(aminoacids)/sizeof(aminoacids[0]); i++)
 	{
-		pair<double,string> p = aminoacids[i];
+		std::pair<double,std::string> p = aminoacids[i];
 		if(p.second[0]==c)
 		{
 			return p.first;

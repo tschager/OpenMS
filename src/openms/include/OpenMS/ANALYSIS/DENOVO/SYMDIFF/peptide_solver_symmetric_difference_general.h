@@ -159,7 +159,7 @@ void find_all_peptides(std::vector<peak>& peaks, char last_letter, double rho, s
       }
     }
   }
-
+  std::cout << "VERTICES:" + std::to_string(2*k) + ";EDGES:" + std::to_string(edge_count) << std::endl;
   //Compute L-Values and max_score in topological order
   std::vector< std::vector<double> > matrix_l = std::vector< std::vector<double> >(k, std::vector<double>(edge_count, NEG_INF));
   std::vector< std::vector<double> > matrix_r = std::vector< std::vector<double> >(k, std::vector<double>(edge_count, NEG_INF));
